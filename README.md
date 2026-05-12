@@ -1,2 +1,719 @@
-# AsakuL.github.io
-qaq
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>永遠喜歡Asuka- | 个人网站</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #fdfbfb 0%, #f0ebf0 100%);
+            font-family: 'Segoe UI', 'Noto Sans CJK SC', 'PingFang SC', Roboto, 'Helvetica Neue', sans-serif;
+            color: #2c2b28;
+            line-height: 1.5;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* 全局容器 */
+        .app-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        /* 可隐藏导航菜单：默认隐藏 */
+        .nav-panel {
+            position: fixed;
+            top: 0;
+            left: -320px;
+            width: 320px;
+            height: 100vh;
+            background: rgba(255, 248, 245, 0.98);
+            backdrop-filter: blur(10px);
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            transition: left 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            border-right: 1px solid #ffddcc;
+        }
+
+        .nav-panel.open {
+            left: 0;
+        }
+
+        /* 菜单头部 */
+        .nav-header {
+            padding: 28px 20px 20px;
+            border-bottom: 2px solid #ffb38b;
+            background: #fff6f0;
+        }
+
+        .nav-header h3 {
+            font-size: 1.6rem;
+            color: #d4572e;
+            letter-spacing: 2px;
+            font-weight: 600;
+        }
+
+        .nav-header p {
+            font-size: 0.85rem;
+            color: #a05a3a;
+            margin-top: 8px;
+        }
+
+        /* 菜单列表 */
+        .nav-menu {
+            flex: 1;
+            padding: 20px 0;
+        }
+
+        .nav-item {
+            display: block;
+            padding: 14px 28px;
+            font-size: 1.15rem;
+            font-weight: 500;
+            color: #4a3729;
+            text-decoration: none;
+            transition: all 0.2s;
+            border-left: 4px solid transparent;
+        }
+
+        .nav-item:hover {
+            background: #ffe6db;
+            border-left-color: #ff8c5a;
+            color: #b6451a;
+        }
+
+        /* 折叠区内部样式 (舰礼留档专用) */
+        .expandable-section {
+            padding-left: 28px;
+            padding-right: 20px;
+            margin-top: 6px;
+            margin-bottom: 8px;
+        }
+
+        details {
+            background: #fffaf5;
+            border-radius: 20px;
+            margin: 10px 0;
+            border: 1px solid #ffe0d0;
+        }
+
+        summary {
+            font-weight: 600;
+            padding: 12px 18px;
+            cursor: pointer;
+            color: #ce5a2e;
+            background: #fff0e8;
+            border-radius: 20px;
+            list-style: none;
+            transition: 0.1s;
+        }
+
+        summary::-webkit-details-marker {
+            display: none;
+        }
+
+        summary::before {
+            content: "📋 ";
+            font-size: 1rem;
+        }
+
+        details[open] summary::before {
+            content: "📂 ";
+        }
+
+        .detail-content {
+            padding: 12px 16px 16px;
+            border-top: 1px solid #ffe0d0;
+            font-size: 0.95rem;
+        }
+
+        .detail-content p {
+            margin: 8px 0;
+            padding-left: 8px;
+            border-left: 3px solid #ffaa7a;
+        }
+
+        /* 底部信息 */
+        .nav-footer {
+            padding: 24px 24px 32px;
+            font-size: 0.75rem;
+            color: #b98f78;
+            background: #fff9f5;
+            border-top: 1px solid #f0dacf;
+        }
+
+        /* 汉堡按钮 + 遮罩 */
+        .menu-toggle {
+            position: fixed;
+            top: 24px;
+            left: 24px;
+            width: 48px;
+            height: 48px;
+            background: #ffffffcc;
+            backdrop-filter: blur(8px);
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1100;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: 0.2s;
+            border: 1px solid #ffe0cd;
+        }
+
+        .menu-toggle:hover {
+            background: #fff0e6;
+            transform: scale(0.97);
+        }
+
+        .menu-toggle span {
+            font-size: 28px;
+            font-weight: 400;
+            color: #d45b2c;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.3);
+            backdrop-filter: blur(2px);
+            z-index: 990;
+            display: none;
+        }
+
+        .overlay.show {
+            display: block;
+        }
+
+        /* 主要内容区 */
+        .main-content {
+            transition: margin-left 0.3s;
+            padding: 20px 16px 40px;
+        }
+
+        /* 卡片通用样式 */
+        .card {
+            background: rgba(255, 255, 245, 0.9);
+            backdrop-filter: blur(2px);
+            border-radius: 32px;
+            padding: 28px 24px;
+            margin-bottom: 32px;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255, 200, 170, 0.6);
+            transition: 0.2s;
+        }
+
+        .hero {
+            text-align: center;
+            background: linear-gradient(125deg, #fff9f2, #ffefe3);
+            border-bottom: 4px solid #ffaa77;
+        }
+
+        .avatar {
+            width: 100px;
+            height: 100px;
+            background: #efc8ae;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            margin-bottom: 16px;
+            box-shadow: 0 8px 14px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            font-size: 2rem;
+            background: linear-gradient(135deg, #d85c2e, #a13b12);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .sub {
+            color: #ab6f4e;
+            margin-bottom: 20px;
+            font-size: 1rem;
+        }
+
+        .live-status {
+            display: inline-flex;
+            align-items: center;
+            background: #2d2a24;
+            border-radius: 40px;
+            padding: 6px 18px;
+            margin: 12px 0;
+            gap: 12px;
+        }
+
+        .status-text {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        /* 按钮组 */
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin: 24px 0 10px;
+        }
+
+        .btn {
+            background: #ffdcc9;
+            padding: 10px 28px;
+            border-radius: 60px;
+            text-decoration: none;
+            font-weight: 600;
+            color: #9b4622;
+            transition: 0.2s;
+            border: 1px solid #ffbc95;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: #fa9e6d;
+            color: white;
+            border: none;
+            box-shadow: 0 4px 10px rgba(218, 94, 42, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: #e47e47;
+            transform: translateY(-2px);
+        }
+
+        .btn:hover {
+            background: #ffc6ab;
+            transform: translateY(-2px);
+        }
+
+        /* 歌单表格 清新 */
+        .song-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+        }
+
+        .song-table th, .song-table td {
+            padding: 12px 8px;
+            text-align: left;
+            border-bottom: 1px solid #f3dbc9;
+        }
+
+        .song-table th {
+            font-weight: 700;
+            color: #bc5f36;
+        }
+
+        /* 舰礼留档单独样式 区分细节 */
+        .gift-item {
+            background: #fff7f0;
+            margin: 16px 0;
+            border-radius: 24px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+        }
+
+        /* 商务部分 关于本站简约 */
+        .info-line {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin: 14px 0;
+        }
+
+        .credit {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.75rem;
+            color: #bb9480;
+        }
+
+        hr {
+            margin: 12px 0;
+            border: none;
+            height: 1px;
+            background: #ffe2d2;
+        }
+
+        @media (max-width: 640px) {
+            .nav-panel {
+                width: 280px;
+            }
+            .button-group {
+                flex-direction: column;
+                align-items: center;
+            }
+            .btn {
+                width: 80%;
+                justify-content: center;
+            }
+            .card {
+                padding: 20px 16px;
+            }
+            h1 {
+                font-size: 1.7rem;
+            }
+        }
+
+        /* 加载状态小变化 */
+        .live-badge {
+            background: #4caf50;
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 0.85rem;
+            color: white;
+        }
+        .offline-badge {
+            background: #9e9e9e;
+        }
+        .loading-badge {
+            background: #ffb74d;
+        }
+    </style>
+</head>
+<body>
+<div class="app-container">
+    <!-- 可隐藏导航菜单 -->
+    <div class="nav-panel" id="navPanel">
+        <div class="nav-header">
+            <h3>🌙 Asuka导航</h3>
+            <p>夢の中まで会いに来て</p>
+        </div>
+        <div class="nav-menu">
+            <a class="nav-item" href="#" data-nav="top">🏠 首页</a>
+            <a class="nav-item" href="#songlist">🎵 歌单</a>
+            <a class="nav-item" href="#questionbox">📬 提问箱</a>
+            <!-- 可展开舰礼留档 -->
+            <div class="expandable-section">
+                <details>
+                    <summary>✨ 舰礼留档</summary>
+                    <div class="detail-content">
+                        <details>
+                            <summary>🎉 满月活动 · 留档</summary>
+                            <div class="detail-content">
+                                <p>🌙 满月限定舰长礼：Asuka纪念亚克力立牌 + 亲笔签名色纸</p>
+                                <p>🎁 满月舰队海报（全舰长ID上墙）</p>
+                                <p>📸 满月合照回放 & 特别语音包「明日香的感谢」</p>
+                            </div>
+                        </details>
+                        <details>
+                            <summary>⭐ 出道月活动 · 留档</summary>
+                            <div class="detail-content">
+                                <p>🌟 出道月限定船票 / 虚拟徽章「AsukaL·初星」</p>
+                                <p>🎤 出道首月纪念歌回精选音源 + 专属舰礼表情包</p>
+                                <p>📜 明日香手写感谢信(电子版)  + 定制指针「起航Asuka」</p>
+                            </div>
+                        </details>
+                    </div>
+                </details>
+            </div>
+            <a class="nav-item" href="#downloads">📦 资源下载</a>
+            <a class="nav-item" href="#business">🤝 商务合作</a>
+            <a class="nav-item" href="#about">ℹ️ 关于本站</a>
+        </div>
+        <div class="nav-footer">
+            <div>© 2025 永遠喜歡Asuka-</div>
+            <div>✨ 感谢豆包老师 ✨</div>
+        </div>
+    </div>
+    <div class="overlay" id="overlay"></div>
+    <div class="menu-toggle" id="menuToggle">
+        <span>☰</span>
+    </div>
+
+    <div class="main-content">
+        <!-- hero区 / 包含直播状态与快速链接 -->
+        <div class="card hero">
+            <div class="avatar">🌸</div>
+            <h1>永遠喜歡Asuka-</h1>
+            <div class="sub">「今天我又晒了十二个小时，为什么我还没成为阳光男孩」</div>
+            <div id="liveStatusWidget">
+                <div class="live-status">
+                    <span>🕒 直播状态 · Bilibili</span>
+                    <span class="status-text" id="liveStatusText">检测中...</span>
+                    <span id="liveBadge" class="live-badge loading-badge">加载中</span>
+                </div>
+                <div style="font-size: 0.85rem; margin-top: 6px;" id="liveExtraInfo"></div>
+            </div>
+            <div class="button-group">
+                <a href="https://space.bilibili.com/102829133" target="_blank" class="btn">📺 B站主页</a>
+                <a href="https://live.bilibili.com/5229659" target="_blank" class="btn btn-primary">🔴 前往直播间</a>
+            </div>
+        </div>
+
+        <!-- 歌单部分张学友歌曲 -->
+        <div id="songlist" class="card">
+            <h2 style="display: flex; gap: 8px;">🎶 歌单 · 精选</h2>
+            <p style="margin-bottom: 12px; color:#b46946;">—— 偶尔也为你唱一首老歌 ——</p>
+            <table class="song-table">
+                <thead>
+                    <tr><th>歌曲名称</th><th>歌手</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>遥远的她</td><td>张学友</td></tr>
+                    <tr><td>每天爱你多一些</td><td>张学友</td></tr>
+                    <tr><td>一路上有你</td><td>张学友</td></tr>
+                    <tr><td>分手总要在雨天</td><td>张学友</td></tr>
+                    <tr><td>李香兰</td><td>张学友</td></tr>
+                    <tr><td>你的名字我的姓氏</td><td>张学友</td></tr>
+                    <tr><td>爱是永恒</td><td>张学友</td></tr>
+                    <tr><td>只想一生跟你走</td><td>张学友</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 提问箱 -->
+        <div id="questionbox" class="card">
+            <h2>📭 提问箱 【Dreamail】</h2>
+            <p style="margin: 12px 0;">点击下方链接即可发送 D-Mail 给明日香哦 💌</p>
+            <a href="https://dreamail.cn/send?dm=e40e801f-d679-46f1-93ca-bc3d1b4d623d" target="_blank" class="btn btn-primary" style="display: inline-block;">✉️ 发送D-Mail</a>
+        </div>
+
+        <!-- 舰礼留档页面独立展示（便于展开） -->
+        <div id="milestone" class="card">
+            <h2>🎁 舰礼留档 · 珍藏时刻</h2>
+            <div class="gift-item">
+                <details>
+                    <summary style="background:#fff3ea;">🎉 满月活动留档</summary>
+                    <div class="detail-content">
+                        <p>✨ 满月限定舰长礼：Asuka纪念亚克力立牌 + 亲笔签名色纸</p>
+                        <p>🎊 满月舰队海报（全舰长ID上墙）</p>
+                        <p>🎤 满月纪念回特别语音包「明日香的感谢」+ 舰长群限定表情</p>
+                    </div>
+                </details>
+            </div>
+            <div class="gift-item">
+                <details>
+                    <summary style="background:#fff3ea;">🌟 出道月活动留档</summary>
+                    <div class="detail-content">
+                        <p>🎫 出道月限定船票 / 虚拟徽章「AsukaL·初星」</p>
+                        <p>🎵 出道首月纪念歌回精选音源合集（仅限舰队）</p>
+                        <p>🎀 明日香手写感谢信(电子版) + 专属指针「起航Asuka」+ 房间专属表情包</p>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <!-- 资源下载 表情和指针 -->
+        <div id="downloads" class="card">
+            <h2>📁 资源下载</h2>
+            <p style="margin-bottom: 14px;">✨ Asuka房间专属表情包 & 专属指针 ✨</p>
+            <div class="button-group" style="justify-content: flex-start;">
+                <a href="#" class="btn" id="downloadEmojiBtn">😊 专属表情包 (Asuka表情包) </a>
+                <a href="#" class="btn" id="downloadCursorBtn">🖱️ 专属指针 (Asuka指针) </a>
+            </div>
+            <p style="font-size:0.8rem; margin-top:12px; color:#bc7a5a;">※ 点击即可下载压缩包 (演示效果，实际可替换真实链接)</p>
+        </div>
+
+        <!-- 商务合作 -->
+        <div id="business" class="card">
+            <h2>🤝 商务合作</h2>
+            <div class="info-line">📧 商务邮箱：<strong>1258965208@qq.com</strong> <a href="mailto:1258965208@qq.com" class="btn" style="padding:4px 12px;">📩 复制/发送</a></div>
+            <div class="info-line">💬 商务合作请附上详细企划，感谢支持~</div>
+        </div>
+
+        <!-- 关于本站 -->
+        <div id="about" class="card">
+            <h2>🔮 关于本站</h2>
+            <p>作者 / 维护：永遠喜歡Asuka-</p>
+            <p>💛 吹弹可破の小站，路过大佬轻喷喵 ♡ 感谢豆包老师！</p>
+            <p>📌 直播时间：每日20:00起 (周二定休)，午台随机掉落~<br>
+            直播内容：杂谈 | 唱歌 | 偶尔打游戏，粉丝灯牌名称：<strong>AsukaL</strong></p>
+            <div class="credit">✨ 本站为虚拟主播「永遠喜歡Asuka-」个人网站 ✨</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 直播间信息
+    const ROOM_ID = '5229659';   // b站房间号
+    const LIVE_API_URL = `https://api.live.bilibili.com/room/v1/Room/get_info?room_id=${ROOM_ID}`;
+    
+    // DOM 元素
+    const liveStatusText = document.getElementById('liveStatusText');
+    const liveBadge = document.getElementById('liveBadge');
+    const liveExtraInfo = document.getElementById('liveExtraInfo');
+
+    // 菜单控制
+    const navPanel = document.getElementById('navPanel');
+    const overlay = document.getElementById('overlay');
+    const menuToggle = document.getElementById('menuToggle');
+    const navLinks = document.querySelectorAll('.nav-item');
+
+    function closeNav() {
+        navPanel.classList.remove('open');
+        overlay.classList.remove('show');
+    }
+    function openNav() {
+        navPanel.classList.add('open');
+        overlay.classList.add('show');
+    }
+    menuToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (navPanel.classList.contains('open')) {
+            closeNav();
+        } else {
+            openNav();
+        }
+    });
+    overlay.addEventListener('click', closeNav);
+    navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            // 如果带hash，手动滚动，不关闭菜单时会影响体验，但仍然关闭侧边栏
+            const href = link.getAttribute('href');
+            if (href && href !== '#' && href.startsWith('#')) {
+                const targetId = href.substring(1);
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    e.preventDefault();
+                    targetEl.scrollIntoView({ behavior: 'smooth' });
+                    closeNav();
+                }
+            } else if (href === '#') {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                closeNav();
+            } else if (href && !href.startsWith('#')) {
+                // 普通链接 关闭菜单即可
+                closeNav();
+            } else {
+                closeNav();
+            }
+        });
+    });
+
+    // 为了防止非hash情况
+    document.querySelectorAll('.nav-menu .nav-item').forEach(item => {
+        if(!item.getAttribute('href') || item.getAttribute('href') === '#') {
+            item.addEventListener('click', (e) => {
+                if(item.getAttribute('href') === '#') e.preventDefault();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                closeNav();
+            });
+        }
+    });
+    
+    // 获取直播状态 (实时)
+    async function fetchLiveStatus() {
+        try {
+            // 设置超时与防缓存
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 8000);
+            const response = await fetch(LIVE_API_URL, { 
+                signal: controller.signal,
+                headers: { 'Accept': 'application/json' }
+            });
+            clearTimeout(timeoutId);
+            
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const data = await response.json();
+            if (data && data.code === 0 && data.data) {
+                const liveStatus = data.data.live_status;  // 0:未开播 1:直播中 2:轮播中
+                const title = data.data.title || '杂谈回';
+                const online = data.data.online || 0;
+                if (liveStatus === 1) {
+                    liveStatusText.innerText = '🔴 直播中';
+                    liveBadge.innerText = 'LIVE';
+                    liveBadge.className = 'live-badge';
+                    liveBadge.style.background = '#e34234';
+                    liveExtraInfo.innerHTML = `🎤 当前直播：「${title}」 | 人气 ${online}`;
+                } else if (liveStatus === 2) {
+                    liveStatusText.innerText = '🔄 轮播中';
+                    liveBadge.innerText = '轮播';
+                    liveBadge.className = 'live-badge';
+                    liveBadge.style.background = '#ffa500';
+                    liveExtraInfo.innerHTML = `📺 轮播节目: ${title || '精彩回顾'}`;
+                } else {
+                    liveStatusText.innerText = '🌙 未开播';
+                    liveBadge.innerText = 'OFF AIR';
+                    liveBadge.className = 'live-badge offline-badge';
+                    liveBadge.style.background = '#9e9e9e';
+                    liveExtraInfo.innerHTML = `✨ 下次直播：每晚20:00，周二定休，随时午台掉落 ✨`;
+                }
+            } else {
+                throw new Error('API数据异常');
+            }
+        } catch (err) {
+            console.warn('直播API获取失败: ', err);
+            liveStatusText.innerText = '💤 状态偷偷溜走了~';
+            liveBadge.innerText = '离线';
+            liveBadge.className = 'live-badge offline-badge';
+            liveExtraInfo.innerHTML = '⭐ 直接点击【前往直播间】或许有惊喜 ⭐';
+        }
+    }
+    
+    // 初次加载 + 轮询 1分钟
+    fetchLiveStatus();
+    setInterval(fetchLiveStatus, 60000);
+    
+    // 简单下载模拟 (表情包 + 专属指针)，这里实际展示base64模拟压缩文件提醒
+    const downloadEmoji = document.getElementById('downloadEmojiBtn');
+    const downloadCursor = document.getElementById('downloadCursorBtn');
+    
+    函数 fakeDownload(文件名, 内容文本) {
+        const blob = new Blob([contentText], {type: 'text/plain'});
+        const a = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+    
+下载表情符号。addEventListener('点击', (e) => {
+        e.preventDefault();
+        // 模拟表情包打包下载提示 (实际制作中可以替换真实公共链接)
+        fakeDownload('Asuka_专属表情包.txt', '✨ Asuka表情包合集 ✨\n包含：晚安Asuka、谢谢打call、Asuka委屈、开心杂谈、晒太阳失败、喵星人等原创表情，感谢支持~\n(实际可替换为真实压缩包链接)');
+    });
+    
+    downloadCursor.addEventListener('click', (e) => {
+        e.preventDefault();
+        fakeDownload('Asuka_专属指针_set.txt', ‘明日香房间专属指针’
+自定义光标方案（.cur .ani 安装说明）
+- 明日香星星光标
+- 小飞机指针
+- 樱花猫爪点击特效
+❤ 舰限特典，感谢陪伴❤');
+    });
+    
+    // 增加一点视觉效果来显示房间号和粉丝灯牌
+    const heroCard = document.querySelector('.hero');
+    如果(英雄卡片) {
+        const infoSpan = document.createElement('div');
+        infoSpan.style.marginTop = '14px';
+        infoSpan.style.fontSize = '0.85rem';
+        infoSpan.style.color = '#d87c52';
+        infoSpan.innerHTML = '🏅 粉丝灯牌：AsukaL　｜　UID:102829133　｜　房间号:5229659';
+        heroCard.appendChild(infoSpan);
+    }
+    
+    // 额外显示直播时间注解
+    const aboutCard = document.querySelector('#about');
+    if(aboutCard && !aboutCard.innerHTML.includes('灯牌名称')) {
+        // 避免重复,但已经有了
+    }
+</脚本>
+</body>
+      </html>
